@@ -279,8 +279,6 @@ void single_operation(const float *buff_in,float *buff_out,
 	return;
 
     int sx = threadIdx.x+1, sy = threadIdx.y + 1;
-    int imSizeX = blockDim.x * gridDim.x;
-    int imSizeY = blockDim.y * gridDim.y;
 
     s_Ik[sx][sy] = 
 	buff_in[glob_ind];
@@ -290,36 +288,24 @@ void single_operation(const float *buff_in,float *buff_out,
 
     if ( threadIdx.x == 0)
     {
-	if ( glob_x > 0 )
-	{
-	    s_Ik[sx-1][sy] = 
-		buff_in[GLOBALIND(glob_x-1,glob_y)];
-	}
+	s_Ik[sx-1][sy] = 
+	    buff_in[GLOBALIND(glob_x-1,glob_y)];
     }
     else if ( threadIdx.x == blockDim.x-1 )
     {
-	if ( glob_x < imSizeX-1 )
-	{
-	    s_Ik[sx+1][sy] = 
-		buff_in[GLOBALIND(glob_x+1,glob_y)];
-	}
+        s_Ik[sx+1][sy] = 
+	    buff_in[GLOBALIND(glob_x+1,glob_y)];
     }
     
     if ( threadIdx.y == 0)
     {
-	if ( glob_y > 0 )
-	{
-	    s_Ik[sx][sy-1] = 
-		buff_in[GLOBALIND(glob_x,glob_y-1)];
-	}
+        s_Ik[sx][sy-1] = 
+	    buff_in[GLOBALIND(glob_x,glob_y-1)];
     }
     else if ( threadIdx.y == blockDim.y-1 )
     {
-	if ( glob_y < imSizeY-1 )
-	{
-	    s_Ik[sx][sy+1] = 
-		buff_in[GLOBALIND(glob_x,glob_y+1)];
-	}
+        s_Ik[sx][sy+1] = 
+	    buff_in[GLOBALIND(glob_x,glob_y+1)];
     }
     __syncthreads();
     
